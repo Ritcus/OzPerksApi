@@ -6,6 +6,12 @@ using OzPerksApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{environmentName}.json", optional:true).Build();
+
+
 // Add services to the container.
 
 // Configure MongoDb client and database.
