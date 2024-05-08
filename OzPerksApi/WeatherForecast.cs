@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Components;
+
 namespace OzPerksApi
 {
     public class WeatherForecast
