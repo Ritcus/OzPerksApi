@@ -30,6 +30,8 @@ builder.Services.AddScoped(typeof(IRepositoryService<>), typeof(RepositoryServic
 
 // Register repositories services with specific collection name
 builder.Services.AddScoped<IRepositoryService<User>>(s => new RepositoryService<User>(s.GetRequiredService<IMongoDatabase>(), "users"));  //User collection
+builder.Services.AddScoped<IRepositoryService<Admin>>(s => new RepositoryService<Admin>(s.GetRequiredService<IMongoDatabase>(), "admin_users"));  //Admin collection
+builder.Services.AddScoped<IRepositoryService<Post>>(s => new RepositoryService<Post>(s.GetRequiredService<IMongoDatabase>(), "posts"));  //BargainPost collection
 
 //...... add others
 
