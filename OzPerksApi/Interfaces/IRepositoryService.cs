@@ -9,8 +9,8 @@ namespace OzPerksApi.Interfaces
         Task<IEnumerable<T>> Get();
         Task<T> GetByIdAsync(string id);
         Task Create(T entity);
-        Task Update(string id, T entity);
-        Task Delete(string id);
+        Task<T> Update(string id, T entity);
+        Task<bool> Delete(string id);
         #endregion
 
         #region Post Operations

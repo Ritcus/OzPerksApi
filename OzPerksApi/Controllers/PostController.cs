@@ -26,13 +26,13 @@ namespace OzPerksApi.Controllers
             { 
                 if (!Enum.TryParse(postType.ToLower(), out type))
                 {
-                    return BadRequest("Invalid post type.");
+                    return StatusCode(400, new { message = "Invalid post type." });
                 }
 
             }
             catch {
 
-                return BadRequest("Invalid post type.");
+                return StatusCode(500, new { message = "Invalid post type." });
             }
             var posts = await _postService.GetPostsByType(type);
             return Ok(posts);
@@ -47,11 +47,11 @@ namespace OzPerksApi.Controllers
                 post.Image = imageData.Result;
                 await _postService.Create(post);
                 _logger.LogInformation("A new post has been created");
-                return Ok("A new post has been created");
+                return Ok(new { message = "A new post has been created", post });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, new { message = ex.Message });
             }
         }
 
@@ -63,16 +63,18 @@ namespace OzPerksApi.Controllers
                 if (string.IsNullOrEmpty(Id))
                 {
                     _logger.LogError("Post not found.");
-                    return BadRequest("Post not found.");
+                    return StatusCode(404, new { message = "Post not found."});
                 }
                 var post = await _postService.GetByIdAsync(Id);
+                if(post == null)
+                    return StatusCode(404, new { message = "Post not found." });
+                
                 return Ok(post);
-
             }
             catch(Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, new { message = ex.Message });
             }
         }
 
@@ -84,17 +86,21 @@ namespace OzPerksApi.Controllers
                 if (string.IsNullOrEmpty(Id) || post == null)
                 {
                     _logger.LogError("Post not found.");
-                    return BadRequest("Post not found.");
+                    return StatusCode(404, new { message = "Post not found." });
                 }
-                await _postService.Update(Id, post);
+                var resultPost = await _postService.Update(Id, post);
+
+                if (resultPost == null)
+                    return StatusCode(404, new { message = "Post not found." });
+
                 _logger.LogInformation($"A post with id `{Id}` has been updated");
-                return Ok($"A post with id `{Id}` has been updated");
+                return Ok(new { message = $"A post with id `{Id}` has been updated", resultPost });
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, new { message = ex.Message });
             }
         }
 
@@ -106,17 +112,19 @@ namespace OzPerksApi.Controllers
                 if (string.IsNullOrEmpty(Id))
                 {
                     _logger.LogError("Post not found.");
-                    return BadRequest("Post not found.");
+                    return StatusCode(404, "Post not found.");
                 }
-                await _postService.Delete(Id);
+                if(!await _postService.Delete(Id))
+                    return StatusCode(404, new { message = "Post not found." });
+
                 _logger.LogInformation($"A post with id `{Id}` has been deleted");
-                return Ok($"A post with id `{Id}` has been deleted");
+                return Ok(new { message = $"A post with id `{Id}` has been deleted" });
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, new { message = ex.Message });
             }
         }
     }

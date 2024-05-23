@@ -17,10 +17,11 @@ namespace OzPerksApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Admin>> Get()
+        public async Task<ActionResult<IEnumerable<Admin>>> Get()
         {
+            var admins = await _adminService.Get();
             _logger.LogInformation("Get all admins");
-            return await _adminService.Get();
+            return Ok(admins);
         }
 
         [HttpPost]
@@ -30,12 +31,12 @@ namespace OzPerksApi.Controllers
             {
                 await _adminService.Create(admin);
                 _logger.LogInformation($"Added admin {admin.FullName}");
-                return Ok("A new admin created");
+                return Ok(new { message = "A new admin created" });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, new { message = ex.Message });
             }
         }
 
@@ -48,19 +49,19 @@ namespace OzPerksApi.Controllers
                 {
                     await _adminService.Update(Id, admin);
                     _logger.LogInformation($"Updated admin {admin.FullName}");
-                    return Ok($"{admin.FullName} has been updated");
+                    return Ok(new { message = $"{admin.FullName} has been updated" });
                 }
                 else
                 {
                     _logger.LogError("Admin not found");
-                    return StatusCode(404, "User not found");
+                    return StatusCode(404, new { message = "Admin not found" });
                 }
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, new { message = ex.Message });
             }
         }
 
@@ -74,19 +75,19 @@ namespace OzPerksApi.Controllers
                 {
                     await _adminService.Delete(Id);
                     _logger.LogInformation($"Deleted admin {Id}");
-                    return Ok("Admin has been deleted successfully");
+                    return Ok(new { message = "Admin has been deleted successfully" });
                 }
                 else
                 {
                     _logger.LogError("Admin does not exists");
-                    return StatusCode(404, "User not found");
+                    return StatusCode(404, new { message = "Admin not found" });
                 }
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, new { message = ex.Message });
             }
         }
 

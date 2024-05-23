@@ -14,6 +14,14 @@ builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnC
 
 // Add services to the container.
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+    b => b.WithOrigins("http://localhost:8081")
+    .AllowAnyHeader()
+    .AllowAnyMethod());
+});
+
 // Configure MongoDb client and database.
 
 var ozPerksHubDbSettings = new OzPerksHubDbSettings();
@@ -53,6 +61,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors("AllowSpecificOrigin");
 
 app.MapControllerRoute(name: "default", pattern: "api/{controller}/{id}");
 

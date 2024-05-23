@@ -17,10 +17,11 @@ namespace OzPerksApi.Controllers
             _logger = logger;
         }
         [HttpGet]
-        public async Task<IEnumerable<User>> Get()
+        public async Task<ActionResult<IEnumerable<User>>> Get()
         {
-            _logger.LogInformation("Get all users");
-            return await _userService.Get();
+           var users = await _userService.Get();
+           _logger.LogInformation("Get all users");
+           return Ok(users);
         }
 
         [HttpPost]
@@ -30,12 +31,12 @@ namespace OzPerksApi.Controllers
             {
                 await _userService.Create(user);
                 _logger.LogInformation($"Added user {user.FullName}");
-                return Ok("A new user created");
+                return Ok(new { message = "A new user created" });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, new { message = ex.Message });
             }
         }
 
@@ -48,19 +49,19 @@ namespace OzPerksApi.Controllers
                 {
                     await _userService.Update(Id, user);
                     _logger.LogInformation($"Updated user {user.FullName}");
-                    return Ok($"{user.FullName} has been updated");
+                    return Ok(new {message = $"{user.FullName} has been updated"});
                 }
                 else
                 {
                     _logger.LogError("User not found");
-                    return StatusCode(404, "User not found");
+                    return StatusCode(404, new { message = "User not found" });
                 }
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, new { message = ex.Message });
             }
         }
 
@@ -74,19 +75,19 @@ namespace OzPerksApi.Controllers
                 {
                     await _userService.Delete(Id);
                     _logger.LogInformation($"Deleted user {user.FullName}");
-                    return Ok("User has been deleted successfully");
+                    return Ok(new { message = "User has been deleted successfully" });
                 }
                 else
                 {
                     _logger.LogError("User does not exists");
-                    return StatusCode(404, "User does not exists");
+                    return StatusCode(404, new { message = "User does not exists" });
                 }
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, new { message = ex.Message });
             }
         }
 

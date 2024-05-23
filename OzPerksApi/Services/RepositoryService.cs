@@ -19,10 +19,15 @@ namespace OzPerksApi.Services
             await _collection.InsertOneAsync(entity);
         }
 
-        public async Task Delete(string id)
+        public async Task<bool> Delete(string id)
         {
             var update = Builders<T>.Update.Set(x => x.IsDeleted, true);
-            await _collection.FindOneAndUpdateAsync(a => a.Id == id, update);
+            var result = await _collection.FindOneAndUpdateAsync(a => a.Id == id, update);
+            if(result == null)
+            {
+                return false;
+            }
+            return true;
         }
 
         public async Task<IEnumerable<T>> Get()
@@ -35,11 +40,12 @@ namespace OzPerksApi.Services
             return await _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task Update(string id, T entity)
+        public async Task<T> Update(string id, T entity)
         {
             entity.Id = id;
             var filter = Builders<T>.Filter.Eq(a => a.Id, id);
-            await _collection.FindOneAndReplaceAsync(filter,entity);
+            var result = await _collection.FindOneAndReplaceAsync(filter,entity);
+            return result;
         }
 
         #endregion

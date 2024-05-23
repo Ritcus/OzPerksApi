@@ -11,5 +11,7 @@ namespace OzPerksApi.Models
         [BsonElement("email")]
         public string Email { get; set; } = string.Empty;
 
+        [BsonElement("type")]
+        public string Type { get; set; } = string.Empty;
     }
 }

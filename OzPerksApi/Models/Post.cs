@@ -20,6 +20,9 @@ namespace OzPerksApi.Models
         [BsonElement("createdAt")]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
+        [BsonElement("lastUpdatedAt")]
+        public DateTime? LastUpdatedAt { get; set; }
+
         [BsonElement("type")]
         public PostType Type { get; set; }
     }
