@@ -31,7 +31,7 @@ namespace OzPerksApi.Controllers
             {
                 await _userService.Create(user);
                 _logger.LogInformation($"Added user {user.FullName}");
-                return Ok(new { message = "A new user created" });
+                return Ok(new { message = "A new user created" , user});
             }
             catch (Exception ex)
             {
